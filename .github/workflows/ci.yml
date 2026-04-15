@@ -28,3 +28,15 @@ jobs:
 
       - name: Rodar testes
         run: npx cypress run
+
+        - name: Rodar testes
+        run: npx cypress run
+
+        - name: Gerar relatório
+        run: npm run cy:report
+
+        - name: Publicar relatório
+        uses: actions/upload-artifact@v3
+  with:
+    name: mochawesome-report
+    path: mochawesome-report
