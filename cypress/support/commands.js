@@ -23,31 +23,35 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-Cypress.Commands.add('token', (email, senha) => {
-    cy.request({
-        method: 'POST',
-        url: 'login',
-        body: {
-            "email": email,
-            "password": senha 
-        }
-    }).then((response) => {
-        expect(response.status).to.equal(200)
-        return response.body.authorization
-    })
- })
+Cypress.Commands.add('criarUsuario', (nome, email, password = '123456', administrador = 'true') => {
+  return cy.request({
+    method: 'POST',
+    url: 'http://localhost:3000/usuarios',
+    body: {
+      nome,
+      email,
+      password,
+      administrador
+    }
+  })
+})
 
- Cypress.Commands.add('cadastrarProduto' , (token, produto, preco, descricao, quantidade) =>{
-    cy.request({
-        method: 'POST', 
-        url: 'produtos',
-        headers: {authorization: token}, 
-        body: {
-            "nome": produto,
-            "preco": preco,
-            "descricao": descricao,
-            "quantidade": quantidade
-          }, 
-          failOnStatusCode: false
-    })
- })
+Cypress.Commands.add('editarUsuario', (id, nome, email, password = '123456', administrador = 'true') => {
+  return cy.request({
+    method: 'PUT',
+    url: `http://localhost:3000/usuarios/${id}`,
+    body: {
+      nome,
+      email,
+      password,
+      administrador
+    }
+  })
+})
+
+Cypress.Commands.add('deletarUsuario', (id) => {
+  return cy.request({
+    method: 'DELETE',
+    url: `http://localhost:3000/usuarios/${id}`
+  })
+})

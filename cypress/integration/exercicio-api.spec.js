@@ -2,109 +2,69 @@
 
 describe('Testes da Funcionalidade Usuários', () => {
 
-     it('Deve validar contrato de usuários', () => {
-          cy.request('http://localhost:3000/usuarios').then((response) => {
-               expect(response.status).to.eq(200)
-               expect(response.body).to.have.property('usuarios')
-          })
-     });
+  it('Deve validar contrato de usuários', () => {
+    cy.request('http://localhost:3000/usuarios').then((response) => {
+      expect(response.status).to.eq(200)
+      expect(response.body).to.have.property('usuarios')
+    })
+  })
 
-     it('Deve listar usuários cadastrados', () => {
-          cy.request('http://localhost:3000/usuarios').then((response) => {
-               expect(response.status).to.eq(200)
-          })
-     });
+  it('Deve listar usuários cadastrados', () => {
+    cy.request('http://localhost:3000/usuarios').then((response) => {
+      expect(response.status).to.eq(200)
+      expect(response.body.usuarios).to.be.an('array')
+    })
+  })
 
-     it('Deve cadastrar um usuário com sucesso', () => {
-          cy.request({
-               method: 'POST',
-               url: 'http://localhost:3000/usuarios',
-               body: {
-                    nome: "Marcia Teste",
-                    email: "marcia" + Date.now() + "@teste.com",
-                    password: "123456",
-                    administrador: "true"
-               }
-          }).then((response) => {
-               expect(response.status).to.eq(201)
-          })
-     });
+  it('Deve cadastrar um usuário com sucesso', () => {
+    const email = `marcia${Date.now()}@teste.com`
 
-     it('Deve validar um usuário com email inválido', () => {
-          cy.request({
-               method: 'POST',
-               url: 'http://localhost:3000/usuarios',
-               failOnStatusCode: false,
-               body: {
-                    nome: "Teste",
-                    email: "email-invalido",
-                    password: "123456",
-                    administrador: "true"
-               }
-          }).then((response) => {
-               expect(response.status).to.eq(400)
-          })
-     });
+    cy.criarUsuario('Marcia Teste', email).then((response) => {
+      expect(response.status).to.eq(201)
+      expect(response.body.message).to.eq('Cadastro realizado com sucesso')
+    })
+  })
 
-     it('Deve editar um usuário previamente cadastrado', () => {
-          let userId
+  it('Deve validar um usuário com email inválido', () => {
+    cy.request({
+      method: 'POST',
+      url: 'http://localhost:3000/usuarios',
+      failOnStatusCode: false,
+      body: {
+        nome: 'Teste',
+        email: 'email-invalido',
+        password: '123456',
+        administrador: 'true'
+      }
+    }).then((response) => {
+      expect(response.status).to.eq(400)
+    })
+  })
 
-          cy.request({
-               method: 'POST',
-               url: 'http://localhost:3000/usuarios',
-               body: {
-                    nome: "Usuario Editar",
-                    email: "editar" + Date.now() + "@teste.com",
-                    password: "123456",
-                    administrador: "true"
-               }
-          }).then((res) => {
-               userId = res.body._id
+  it('Deve editar um usuário previamente cadastrado', () => {
+    const emailOriginal = `usuario${Date.now()}@teste.com`
+    const emailEditado = `editado${Date.now()}@teste.com`
 
-               cy.request({
-                    method: 'PUT',
-                    url: `http://localhost:3000/usuarios/${userId}`,
-                    body: {
-                         nome: "Usuario Editado",
-                         email: "editado" + Date.now() + "@teste.com",
-                         password: "123456",
-                         administrador: "true"
-                    }
-               }).then((response) => {
-                    expect(response.status).to.eq(200)
-               })
-          })
-     });
+    cy.criarUsuario('Usuario Editar', emailOriginal).then((res) => {
+      const userId = res.body._id
 
-     it('Deve deletar um usuário previamente cadastrado', () => {
-          let userId
+      cy.editarUsuario(userId, 'Usuario Editado', emailEditado).then((response) => {
+        expect(response.status).to.eq(200)
+        expect(response.body.message).to.eq('Registro alterado com sucesso')
+      })
+    })
+  })
 
-          cy.request({
-               method: 'POST',
-               url: 'http://localhost:3000/usuarios',
-               body: {
-                    nome: "Usuario Delete",
-                    email: "editar" + Date.now() + "@teste.com",
-                    password: "123456",
-                    administrador: "true"
-               }
-          }).then((res) => {
-               userId = res.body._id
+  it('Deve deletar um usuário previamente cadastrado', () => {
+    const email = `deletar${Date.now()}@teste.com`
 
-               cy.request({
-                    method: 'DELETE',
-                    url: `http://localhost:3000/usuarios/${userId}`,
-                    body: {
-                         nome: "Usuario Editado",
-                         email: "editado" + Date.now() + "@teste.com",
-                         password: "123456",
-                         administrador: "true"
-                    }
-               }).then((response) => {
-                    expect(response.status).to.eq(200)
-               })
-          })
-     });
+    cy.criarUsuario('Usuario Delete', email).then((res) => {
+      const userId = res.body._id
 
-
-});
+      cy.deletarUsuario(userId).then((response) => {
+        expect(response.status).to.eq(200)
+        expect(response.body.message).to.eq('Registro excluído com sucesso')
+      })
+    })
+  })
+})
