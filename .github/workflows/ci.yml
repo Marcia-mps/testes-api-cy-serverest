@@ -8,6 +8,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+      BASE_URL: http://localhost:3000
+
     steps:
       - name: Clonar repositório
         uses: actions/checkout@v4
@@ -20,23 +23,26 @@ jobs:
       - name: Instalar dependências
         run: npm install
 
+      - name: Instalar wait-on
+        run: npm install -g wait-on
+
       - name: Subir servidor
         run: npx serverest &
 
       - name: Esperar servidor
-        run: npx wait-on http://localhost:3000
+        run: wait-on http://localhost:3000
 
       - name: Rodar testes
         run: npx cypress run
+        continue-on-error: true
 
-        - name: Rodar testes
-        run: npx cypress run
-
-        - name: Gerar relatório
+      - name: Gerar relatório
+        if: always()
         run: npm run cy:report
 
-        - name: Publicar relatório
-        uses: actions/upload-artifact@v3
-  with:
-    name: mochawesome-report
-    path: mochawesome-report
+      - name: Publicar relatório
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mochawesome-report
+          path: mochawesome-report

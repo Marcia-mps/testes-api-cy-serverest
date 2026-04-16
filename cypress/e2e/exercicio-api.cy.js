@@ -3,14 +3,14 @@
 describe('Testes da Funcionalidade Usuários', () => {
 
   it('Deve validar contrato de usuários', () => {
-    cy.request('http://localhost:3000/usuarios').then((response) => {
+    cy.request('usuarios').then((response) => {
       expect(response.status).to.eq(200)
       expect(response.body).to.have.property('usuarios')
     })
   })
 
   it('Deve listar usuários cadastrados', () => {
-    cy.request('http://localhost:3000/usuarios').then((response) => {
+    cy.request('usuarios').then((response) => {
       expect(response.status).to.eq(200)
       expect(response.body.usuarios).to.be.an('array')
     })
@@ -28,7 +28,7 @@ describe('Testes da Funcionalidade Usuários', () => {
   it('Deve validar um usuário com email inválido', () => {
     cy.request({
       method: 'POST',
-      url: 'http://localhost:3000/usuarios',
+      url: 'usuarios',
       failOnStatusCode: false,
       body: {
         nome: 'Teste',

@@ -26,7 +26,7 @@
 Cypress.Commands.add('criarUsuario', (nome, email, password = '123456', administrador = 'true') => {
   return cy.request({
     method: 'POST',
-    url: 'http://localhost:3000/usuarios',
+    url: 'usuarios',
     body: {
       nome,
       email,
@@ -39,7 +39,7 @@ Cypress.Commands.add('criarUsuario', (nome, email, password = '123456', administ
 Cypress.Commands.add('editarUsuario', (id, nome, email, password = '123456', administrador = 'true') => {
   return cy.request({
     method: 'PUT',
-    url: `http://localhost:3000/usuarios/${id}`,
+    url: `usuarios/${id}`,
     body: {
       nome,
       email,
@@ -52,6 +52,36 @@ Cypress.Commands.add('editarUsuario', (id, nome, email, password = '123456', adm
 Cypress.Commands.add('deletarUsuario', (id) => {
   return cy.request({
     method: 'DELETE',
-    url: `http://localhost:3000/usuarios/${id}`
+    url: `usuarios/${id}`
+  })
+})
+
+Cypress.Commands.add('token', (email, password) => {
+  return cy.request({
+    method: 'POST',
+    url: 'login',
+    body: {
+      email,
+      password
+    }
+  }).then((response) => {
+    return response.body.authorization
+  })
+})
+
+Cypress.Commands.add('cadastrarProduto', (token, nome, preco, descricao, quantidade) => {
+  return cy.request({
+    method: 'POST',
+    url: 'produtos',
+    headers: {
+      Authorization: token
+    },
+    failOnStatusCode: false,
+    body: {
+      nome,
+      preco,
+      descricao,
+      quantidade
+    }
   })
 })

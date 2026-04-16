@@ -4,15 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "start": "npx serverest",
-  "cy:run": "npx cypress run",
-  "cy:report": "npx mochawesome-merge ./mochawesome-report/*.json > mochawesome-report/report.json && npx mochawesome-report-generator ./mochawesome-report/report.json -o mochawesome-report -f report"
-},
+    "start": "npx serverest",
+    "cy:run": "npx cypress run",
+    "cy:report": "npx mochawesome-merge ./mochawesome-report/*.json > mochawesome-report/report.json && npx mochawesome-report-generator ./mochawesome-report/report.json -o mochawesome-report -f report"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "cypress": "^9.7.0",
+    "cypress": "^15.13.1",
     "cypress-mochawesome-reporter": "^4.0.2",
     "mochawesome": "^7.1.4",
     "mochawesome-merge": "^5.1.1",
